@@ -1,0 +1,26 @@
+#include <stdio.h>
+
+int equalDivisors(int n) {
+    int count = 0;
+    
+    for (int i = 1; i <= n; i++) {
+        if (n % i == n / i) {
+            count++;
+        }
+    }
+    
+    return count;
+}
+
+int main() {
+    int n;
+    
+    printf("Вкажіть число n (1 < n < 150): ");
+    scanf("%d", &n);
+    
+    int numEqualDivisors = equalDivisors(n);
+    
+    printf("Кількість рівних дільика числа %d є: %d\n", n, numEqualDivisors);
+    
+    return 0;
+}
