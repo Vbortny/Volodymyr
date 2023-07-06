@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_LENGTH 14
+
+int factorial(int n) {
+    if (n <= 1)
+        return 1;
+    else
+        return n * factorial(n - 1);
+}
+
+int countAnagrams(char word[]) {
+    int freq[26] = {0};  // Frequency array to store the count of each letter
+    int length = strlen(word);
+    int i, totalAnagrams;
+
+    // Count the frequency of each letter in the word
+    for (i = 0; i < length; i++) {
+        freq[word[i] - 'A']++;
+    }
+
+    // Calculate the number of anagrams using factorial formula
+    totalAnagrams = factorial(length);
+    for (i = 0; i < 26; i++) {
+        if (freq[i] > 1)
+            totalAnagrams /= factorial(freq[i]);
+    }
+
+    return totalAnagrams;
+}
+
+int main() {
+    char word[MAX_LENGTH];
+    int numAnagrams;
+
+    printf("Введіть слово: ");
+    scanf("%s", word);
+
+    numAnagrams = countAnagrams(word);
+
+    printf("Кількість можливих анаграм: %d\n", numAnagrams);
+
+    return 0;
+}
