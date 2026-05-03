@@ -1,0 +1,86 @@
+%% =====================================================================
+%  Дослідження сігмоїдальних функцій належності (Fuzzy Logic)
+%  Виконав: Єсіп В. (Модифікована версія)
+%  =====================================================================
+
+clc; clear; close all;
+
+% Визначення діапазону значень
+t = -10:0.05:10; 
+main_colors = {'r', 'b', 'g', 'm', 'k'}; % Нова палітра
+
+%% 1. ОСНОВНІ ОДНОСТОРОННІ ФУНКЦІЇ (sigmf)
+figure('Name', 'Типи односторонніх сигмоїд', 'Color', 'w');
+
+% Правосторонні (Зростаючі)
+subplot(2,1,1); hold on; grid on;
+slope_vals = [0.4, 0.8, 1.5, 0.8, 0.8];
+center_vals = [0, 0, 0, -4, 4];
+for k = 1:5
+    y_val = sigmf(t, [slope_vals(k), center_vals(k)]);
+    plot(t, y_val, 'LineWidth', 1.8, 'Color', main_colors{k});
+end
+title('Зростаюча сигмоїда (параметр a > 0)');
+legend('a=0.4, c=0','a=0.8, c=0','a=1.5, c=0','a=0.8, c=-4','a=0.8, c=4', 'Location', 'best');
+
+% Лівосторонні (Спадаючі)
+subplot(2,1,2); hold on; grid on;
+for k = 1:5
+    y_val = sigmf(t, [-slope_vals(k), center_vals(k)]);
+    plot(t, y_val, '--', 'LineWidth', 1.8, 'Color', main_colors{k});
+end
+title('Спадаюча сигмоїда (параметр a < 0)');
+xlabel('Аргумент (t)'); ylabel('Ступінь належності');
+
+%% 2. ДВОСТОРОННІ СИМЕТРИЧНІ ФУНКЦІЇ
+figure('Name', 'Симетричні двосторонні функції', 'Color', 'w');
+
+% Метод dsigmf (різниця)
+subplot(1,2,1); hold on; grid on;
+d_configs = [5 -3 5 3; 2 -6 2 6; 1 -4 1 4];
+for i = 1:3
+    plot(t, dsigmf(t, d_configs(i,:)), 'LineWidth', 2, 'DisplayName', sprintf('Параметри: %g %g', d_configs(i,1), d_configs(i,2)));
+end
+title('Різниця сигмоїд (dsigmf)');
+legend show;
+
+% Метод pimf (Pi-функція)
+subplot(1,2,2); hold on; grid on;
+pi_configs = [-7 -3 3 7; -5 -1 1 5; -4 0 2 6];
+for i = 1:3
+    plot(t, pimf(t, pi_configs(i,:)), '-.', 'LineWidth', 2);
+end
+title('П-подібна функція (pimf)');
+xlabel('t');
+
+%% 3. НЕСИМЕТРИЧНІ ФУНКЦІЇ
+figure('Name', 'Асиметрія сигмоїд', 'Color', 'w');
+
+% Добуток сигмоїд (psigmf)
+subplot(1,2,1); hold on; grid on;
+p_configs = [2 -3 1 2; 5 -2 0.5 5; 1 -5 3 4];
+for i = 1:3
+    plot(t, psigmf(t, p_configs(i,:)), 'LineWidth', 2);
+end
+title('Добуток сигмоїд (psigmf)');
+
+% Комбінація smf та zmf
+subplot(1,2,2); hold on; grid on;
+% Створюємо несиметричне плато через min()
+y_asym = min(smf(t, [-6, -4]), zmf(t, [1, 5]));
+plot(t, y_asym, 'Color', 'r', 'LineWidth', 2.5, 'DisplayName', 'smf \cap zmf');
+% dsigmf з різними коефіцієнтами a1 та a2
+plot(t, dsigmf(t, [4, -3, 1, 4]), '--b', 'LineWidth', 2, 'DisplayName', 'dsigmf (a1 \neq a2)');
+title('Спеціальні несиметричні форми');
+legend show;
+
+%% 4. ЗАГАЛЬНЕ ПОРІВНЯННЯ
+figure('Name', 'Підсумковий графік', 'Color', 'w');
+hold on; grid on;
+plot(t, sigmf(t, [1.2, -2]), 'b', 'LineWidth', 2, 'DisplayName', 'Одностороння');
+plot(t, dsigmf(t, [3, -4, 3, 4]), 'r', 'LineWidth', 2, 'DisplayName', 'Двостороння (dsigmf)');
+plot(t, pimf(t, [-6, -2, 2, 6]), 'g', 'LineWidth', 2, 'DisplayName', 'Pi-функція');
+plot(t, psigmf(t, [2, -5, 0.8, 3]), 'm', 'LineWidth', 2, 'DisplayName', 'Несиметрична');
+title('Порівняльний аналіз усіх типів функцій');
+legend('Location', 'southoutside', 'Orientation', 'horizontal');
+ylim([-0.1 1.2]);
